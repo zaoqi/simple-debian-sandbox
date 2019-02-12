@@ -2,7 +2,7 @@
 app="$1"
 id=$RANDOM
 id2username(){
-echo $1.sandbox
+echo $1_sandbox
 }
 id_usr=$(id2username $id)
 me=$(whoami)
