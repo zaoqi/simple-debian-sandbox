@@ -1,0 +1,2 @@
+#!/bin/sh
+eval $(cat sandboxs/bin/"$1"  | grep sudo | sed "s/^\(.*\) '.*$/\1/")
