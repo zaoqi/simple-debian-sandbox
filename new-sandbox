@@ -7,6 +7,10 @@ echo $1.sandbox
 id_usr=$(id2username $id)
 me=$(whoami)
 
+mkdir -p sandboxs/bin
+mkdir -p sandboxs/data
+mkdir -p sandboxs/uninstall
+
 [ -d sandboxs ] || exit
 chmod 700 sandboxs || exit
 cd sandboxs || exit
