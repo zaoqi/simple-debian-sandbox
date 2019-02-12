@@ -37,7 +37,7 @@ ln -s "/home/$id_usr" "$root/data/$id" || exit
 [ ! -f "$root/bin/$app" ] || exit
 echo "#!/bin/sh
 xhost si:localuser:$id_usr
-sudo -i -u $id_usr '$app' \"\$@\"
+sudo -i -u $id_usr 'sh' -c \"XMODIFIERS='\$XMODIFIERS' $app\"
 " > "$root/bin/$app"
 [ -f "$root/bin/$app" ] || exit
 chmod +x "$root/bin/$app"
