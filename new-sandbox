@@ -23,18 +23,20 @@ chmod 700 bin || exit
 [ -d uninstall ] || exit
 chmod 700 uninstall || exit
 
-cd "$root/data" || exit
-sudo useradd -m -d "$PWD/$id" --shell /bin/bash --user-group $id_usr || exit
-sudo chmod 770 $id || exit
-sudo chown $id_usr:$mygroup $id || exit
+sudo useradd -m -d "/home/$id_usr" --shell /bin/bash --user-group $id_usr || exit
+sudo chmod 770 "/home/$id_usr" || exit
+sudo chown $id_usr:$mygroup "/home/$id_usr" || exit
 [ ! -f /etc/sudoers.d/$id_usr ] || exit
 sudo sh -c "echo '$me ALL=($id_usr) NOPASSWD: ALL' > /etc/sudoers.d/$id_usr" || exit
 [ -f /etc/sudoers.d/$id_usr ] || exit
 
+[ ! -f "$root/data/$id" ] || exit
+ln -s "/home/$id_usr" "$root/data/$id" || exit
+[ -d "$root/data/$id" ] || exit
+
 [ ! -f "$root/bin/$app" ] || exit
 echo "#!/bin/sh
 xhost si:localuser:$id_usr
-cd '$root/data/$id' || exit
 sudo -i -u $id_usr '$app' \"\$@\"
 " > "$root/bin/$app"
 [ -f "$root/bin/$app" ] || exit
@@ -43,7 +45,7 @@ chmod +x "$root/bin/$app"
 [ ! -f "$root/uninstall/$app" ] || exit
 echo "#!/bin/sh
 sudo userdel $id_usr || exit
-sudo rm -fr '/etc/sudoers.d/$id_usr' '$root/data/$id' '$root/bin/$app' \"\$0\"
+sudo rm -fr '/etc/sudoers.d/$id_usr' '$root/data/$id' '/home/$id_usr' '$root/bin/$app' \"\$0\"
 " > "$root/uninstall/$app"
 [ -f "$root/uninstall/$app" ] || exit
 chmod +x "$root/uninstall/$app"
