@@ -6,6 +6,7 @@ echo $1.sandbox
 }
 id_usr=$(id2username $id)
 me=$(whoami)
+mygroup=$(id -gn)
 
 mkdir -p sandboxs/bin
 mkdir -p sandboxs/data
@@ -23,10 +24,9 @@ chmod 700 bin || exit
 chmod 700 uninstall || exit
 
 cd "$root/data" || exit
-mkdir $id || exit
-chmod 770 $id || exit
-sudo useradd --home="$PWD/$id" --shell /bin/false --user-group $id_usr || exit
-sudo chown $me:$id_usr $id || exit
+sudo useradd -m -d "$PWD/$id" --shell /bin/bash --user-group $id_usr || exit
+sudo chmod 770 $id || exit
+sudo chown $id_usr:$mygroup $id || exit
 [ ! -f /etc/sudoers.d/$id_usr ] || exit
 sudo sh -c "echo '$me ALL=($id_usr) NOPASSWD: ALL' > /etc/sudoers.d/$id_usr" || exit
 [ -f /etc/sudoers.d/$id_usr ] || exit
@@ -34,7 +34,8 @@ sudo sh -c "echo '$me ALL=($id_usr) NOPASSWD: ALL' > /etc/sudoers.d/$id_usr" || 
 [ ! -f "$root/bin/$app" ] || exit
 echo "#!/bin/sh
 xhost si:localuser:$id_usr
-sudo -u $id_usr '$app' \"\$@\"
+cd '$root/data/$id' || exit
+sudo -i -u $id_usr '$app' \"\$@\"
 " > "$root/bin/$app"
 [ -f "$root/bin/$app" ] || exit
 chmod +x "$root/bin/$app"
